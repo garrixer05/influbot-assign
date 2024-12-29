@@ -114,7 +114,7 @@ export const createEvent = async (req, res)=>{
     try {
         const {title, description, participants, date, startTime, endTime} = req.body;
         const {userId} = req.query;
-        let rs = await createCalenderEvent(req.body)
+        let rs = await createCalenderEvent(req.body, req.session.passport.accessToken)
         if(!rs){
             return res.send({status:false, msg:"Event creation failed"})
         }
@@ -139,7 +139,7 @@ export const createEvent = async (req, res)=>{
 export const deleteEvent = async(req, res)=>{
     try {
         const {id, eventId} = req.query;
-        const rs = await deleteCalenderEvent(eventId);
+        const rs = await deleteCalenderEvent(eventId, req.session.passport.accessToken);
         if(!rs){
             return res.send({status:false, msg:"Event deletion failed"})
         }
@@ -158,7 +158,7 @@ export const updateEvent = async (req, res)=>{
     try {
         const {id, eventId} = req.query;
         const {title, description, participants, date, startTime, endTime} = req.body;
-        const rs = await updateCalendarEvent(eventId, req.body);
+        const rs = await updateCalendarEvent(eventId, req.body, req.session.passport.accessToken);
 
         const ev = await prisma.event.update({
             where:{

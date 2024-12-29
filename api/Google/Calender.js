@@ -54,6 +54,9 @@ const oAuth2Client = new OAuth2({
     clientSecret:process.env.GOOGLE_CLIENT_SECRET,
 });
 
+const refreshAccessToken = async ()=>{
+    const tokens = await oAuth2Client.refreshAccessToken();
+}
 export const getCalenderEvents = async (token)=>{
     var date = new Date(), y = date.getFullYear(), m = date.getMonth();
     let firstDay = new Date(y, m, 1)
@@ -81,8 +84,7 @@ export const getCalenderEvents = async (token)=>{
     }
 }
 
-const token = "ya29.a0ARW5m743kClQfEX4wFmD46OseWkjargHfBg1QdED9NJ_tbCdakN66Dg-25HJ04mU0SCSUehW6x4FkSZC0VSgYK83gEFCZWvYxhu3n5QE3il4Ht7aEyxQ4_9bTQNT_bTfw4C9OeXvzK3y2lYzplOXk3aIc1NLbsdd_pEaCgYKASYSARASFQHGX2MismX3xXN2inSPSD6ikxB0lw0170"
-export const createCalenderEvent = async (data)=>{
+export const createCalenderEvent = async (data, token)=>{
     let {startTime, endTime, title, participants, description} = data;
     participants = participants.map(p=>{
         return {
@@ -119,7 +121,7 @@ export const createCalenderEvent = async (data)=>{
     }
 }
 
-export const deleteCalenderEvent = async (eventId)=>{
+export const deleteCalenderEvent = async (eventId, token)=>{
     try {
         oAuth2Client.setCredentials({
             access_token:token,
@@ -136,7 +138,7 @@ export const deleteCalenderEvent = async (eventId)=>{
     }
 }
 
-export const updateCalendarEvent = async (eventId, data)=>{
+export const updateCalendarEvent = async (eventId, data, token)=>{
     let {startTime, endTime, title, participants, description} = data;
     participants = participants.map(p=>{
         return {

@@ -14,7 +14,12 @@ const PORT = process.env.PORT;
 const app = express();
 
 //middlewares
-app.use(cors());
+app.use(cors(
+    {
+        origin:process.env.ORIGIN,
+        credentials:true
+    }
+));
 app.use(session({
     secret:process.env.EXPRESS_SESSION_SECRET,
     saveUninitialized:true,
@@ -26,6 +31,11 @@ app.use(express.json());
 app.use(AuthRoutes)
 app.use(AppRoutes)
 
+
+app.get("/", (req, res)=>{
+    return res.status(200).send("Influbot API")
+})
+// export default app
 app.listen(PORT, ()=>{
     console.log(`Server is running on ${PORT}`);
 })

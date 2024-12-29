@@ -1,0 +1,36 @@
+.overlay{
+    display: flex; 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    z-index: 50; 
+    padding: 1rem; 
+    justify-content: center; 
+    align-items: center; 
+    width: 100%; 
+    height: 100%; 
+    background-color: #000000; 
+    --bg-opacity: 0.5; 
+    transition-property: opacity;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms; 
+    transition-duration: 500ms; 
+    transition-timing-function: cubic-bezier(0, 0, 0.2, 1); 
+}
+.modal-content{
+    overflow: hidden; 
+    position: relative; 
+    padding: 1.5rem; 
+    border-radius: 0.5rem; 
+    width: 100%; 
+    max-width: 24rem; 
+    background-color: #ffffff; 
+    transition-property: transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms; 
+    transition-duration: 500ms; 
+    transition-timing-function: cubic-bezier(0, 0, 0.2, 1); 
+    --transform-scale-x: 1;
+    --transform-scale-y: 1; 
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); 
+}
