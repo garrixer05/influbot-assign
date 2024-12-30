@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setToken, setUserId, toggleAuth } from './feature/authSlice'
 import { useGoogleLogin } from '@react-oauth/google';
 import toast, { Toaster } from 'react-hot-toast'
-import {AES} from 'crypto-js'
 import { Login } from './components/Login'
 
 function App() {
