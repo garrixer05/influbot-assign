@@ -35,7 +35,7 @@ app.use(AppRoutes)
 app.get("/", (req, res)=>{
     return res.status(200).send("Influbot API")
 })
-// export default app
-app.listen(PORT, ()=>{
-    console.log(`Server is running on ${PORT}`);
-})
+export default app
+// app.listen(PORT, ()=>{
+//     console.log(`Server is running on ${PORT}`);
+// })
