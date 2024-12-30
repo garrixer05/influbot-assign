@@ -12,7 +12,7 @@ import { store } from './store/store.js'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
 
-    <GoogleOAuthProvider clientId="411013056925-j4mg834ik5aja992dkarmjl6ofpstk7g.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId={process.env.REACT_APP_CLIENT_KEY}>
       <Provider store={store}>
 
         <App />
