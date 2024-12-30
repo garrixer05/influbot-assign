@@ -47,9 +47,10 @@ const prisma = getPrismaClient();
 
 export const getUser = async (req, res)=>{
     try {
+        const {id} = req.query
         const user = await prisma.user.findUnique({
             where:{
-                email:req.user.email
+                id
             },
             include:{
                 events:true
@@ -65,6 +66,16 @@ export const failureRedirect = async (req, res)=>{
     try {
         return res.send("something went wrong")
         
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const createUser = async (req, res)=>{
+    try {
+        const {username, email, token} = req.body;
+        const id = await findOrCreate(username, email, token);
+        return res.send({status:true, id, msg:"user created and synced with google calender"})
     } catch (error) {
         console.log(error)
     }
@@ -104,6 +115,7 @@ export const findOrCreate = async (userName, email, token)=>{
                 ],
             });
         }
+        return user.id;
     
     } catch (error) {
         console.log(error)
@@ -113,8 +125,8 @@ export const findOrCreate = async (userName, email, token)=>{
 export const createEvent = async (req, res)=>{
     try {
         const {title, description, participants, date, startTime, endTime} = req.body;
-        const {userId} = req.query;
-        let rs = await createCalenderEvent(req.body, req.session.passport.accessToken)
+        const {userId,token} = req.query;
+        let rs = await createCalenderEvent(req.body, token)
         if(!rs){
             return res.send({status:false, msg:"Event creation failed"})
         }
@@ -138,8 +150,8 @@ export const createEvent = async (req, res)=>{
 
 export const deleteEvent = async(req, res)=>{
     try {
-        const {id, eventId} = req.query;
-        const rs = await deleteCalenderEvent(eventId, req.session.passport.accessToken);
+        const {id, eventId, token} = req.query;
+        const rs = await deleteCalenderEvent(eventId, token);
         if(!rs){
             return res.send({status:false, msg:"Event deletion failed"})
         }
@@ -156,10 +168,12 @@ export const deleteEvent = async(req, res)=>{
 
 export const updateEvent = async (req, res)=>{
     try {
-        const {id, eventId} = req.query;
+        const {id, eventId,token} = req.query;
         const {title, description, participants, date, startTime, endTime} = req.body;
-        const rs = await updateCalendarEvent(eventId, req.body, req.session.passport.accessToken);
-
+        const rs = await updateCalendarEvent(eventId, req.body, token);
+        if(!rs.status){
+            return res.sendStatus(rs?.code)
+        }
         const ev = await prisma.event.update({
             where:{
                 id

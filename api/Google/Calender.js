@@ -54,8 +54,10 @@ const oAuth2Client = new OAuth2({
     clientSecret:process.env.GOOGLE_CLIENT_SECRET,
 });
 
-const refreshAccessToken = async ()=>{
-    const tokens = await oAuth2Client.refreshAccessToken();
+export const verifyAccessToken = async (token)=>{
+
+    const t = await oAuth2Client.getTokenInfo(token)
+    return t
 }
 export const getCalenderEvents = async (token)=>{
     var date = new Date(), y = date.getFullYear(), m = date.getMonth();
@@ -171,6 +173,9 @@ export const updateCalendarEvent = async (eventId, data, token)=>{
             return false;
         }
     } catch (error) {
-        console.log(error)
+        console.log(error);
+        return {code:error.code, status:false}
     }
 }
+
+
