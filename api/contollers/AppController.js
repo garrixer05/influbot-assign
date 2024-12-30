@@ -73,7 +73,8 @@ export const failureRedirect = async (req, res)=>{
 
 export const createUser = async (req, res)=>{
     try {
-        const {username, email, token} = req.body;
+        const {token} = req.query;
+        const {username, email} = req.body;
         const id = await findOrCreate(username, email, token);
         return res.send({status:true, id, msg:"user created and synced with google calender"})
     } catch (error) {

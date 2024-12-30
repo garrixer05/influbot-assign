@@ -13,7 +13,6 @@ function App() {
   const dispatch = useDispatch();
   const login = useGoogleLogin({
     onSuccess: async codeResponse => {
-      console.log(codeResponse.access_token)
       dispatch(setToken(codeResponse.access_token));
 
       try {
@@ -26,13 +25,16 @@ function App() {
         const r = await axios.post(CREATE_USER, {
           email:data.email,
           username:data.name,
-          token:codeResponse.access_token
+        }, {
+          params:{
+            token:codeResponse.access_token
+          }
         })
         dispatch(toggleAuth());
         dispatch(setUserId(r.data.id))
       } catch (error) {
         console.log(error);
-        toast.error("Somthing went wrong.")
+        toast.error(`${error.message}`)
       }
     }
   });

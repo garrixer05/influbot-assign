@@ -8,9 +8,9 @@ const router = Router();
 router.get("/app/getUser",getUserValidationSchema, validateResults ,getUser);
 router.get("/failure", failureRedirect);
 
-router.post("/app/create-user",createUserValidationSchema, validateResults ,createUser)
-router.post("/app/create-event",createEventValidateSchemaChain, validateResults ,createEvent);
-router.delete("/app/delete-event", deleteEventValidateSchema,  validateResults , deleteEvent);
-router.put("/app/update-event", updateEventValidateSchema, validateResults , updateEvent);
+router.post("/app/create-user", verifyToken, createUserValidationSchema, validateResults ,createUser)
+router.post("/app/create-event", verifyToken,createEventValidateSchemaChain, validateResults ,createEvent);
+router.delete("/app/delete-event", verifyToken,deleteEventValidateSchema,  validateResults , deleteEvent);
+router.put("/app/update-event", verifyToken,updateEventValidateSchema, validateResults , updateEvent);
 
 export default router;

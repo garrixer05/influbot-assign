@@ -9,7 +9,9 @@ export const isLoggedin = async (req, res, next)=>{
 }
 export const psp = passport.authenticate("google", ["email", "profile", "https://www.googleapis.com/auth/calendar.events"]);
 
-export const verifyToken = async (req, res)=>{
-    await verifyAccessToken(req.query.token);
-    return res.send({t})
+export const verifyToken = async (req, res, next)=>{
+    if(!req.query.token){
+        return res.sendStatus(401)
+    }
+    next()
 }
