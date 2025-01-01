@@ -14,13 +14,6 @@ export const MyCalendar = () => {
   const {isVisible} = useSelector((store)=>store.modal);
   const {userId} = useSelector(store=>store.auth);
   const {events} = useSelector(store=>store.ev);
-  const [eventsFrom, setEvents] = useState(events.map(ev=>{
-    return{
-      ...ev,
-      start:ev?.startTime,
-      end:ev?.endTime,
-    }
-  }));
   useEffect(()=>{
     const getUserEv = async ()=>{
       try {
@@ -52,7 +45,7 @@ export const MyCalendar = () => {
       //   setEvents((prev) => [...prev, { start, end, title }])
       // }
     },
-    [setEvents]
+    []
   )
   const handleSelectEvent = useCallback(
     (event) => {
@@ -69,7 +62,13 @@ export const MyCalendar = () => {
       }
         
       <Calendar
-        events={eventsFrom}
+        events={events.map(ev=>{
+          return{
+            ...ev,
+            start:ev?.startTime,
+            end:ev?.endTime,
+          }
+        })}
         onSelectEvent={handleSelectEvent}
         onSelectSlot={handleSelectSlot}
         onSelecting={(i)=>handleSlot(i)}
