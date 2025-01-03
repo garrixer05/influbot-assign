@@ -190,10 +190,15 @@ export const syncWithGCalendar = async (bodyString) => {
         const { token, id } = serUser.get(email);
 
         const evs = await getCalenderEvents(token);
+        console.log(evs)
         let newEvents = evs.map((ev) => {
-            let participants = ev.attendees.map(p => p.email)
+            let participants = ev.attendees?.map(p => {
+                return {
+                    email:p.email
+                }
+            })
             return {
-                userId: user.id,
+                userId: id,
                 eventId: ev.id,
                 title: ev.summary,
                 description: ev.description,

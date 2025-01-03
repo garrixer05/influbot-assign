@@ -100,7 +100,7 @@ export const findOrCreate = async (userName, email, token)=>{
                 }
             });
             let processedEv = events.map((ev)=>{
-                let participants = ev.attendees.map(p=>p.email)
+                let participants = ev?.attendees?.map(p=>p.email)
                 return {
                     userId: user.id,
                     eventId:ev.id,
@@ -112,11 +112,13 @@ export const findOrCreate = async (userName, email, token)=>{
                     endTime:new Date(ev.end.dateTime)
                 }
             });
-            let count = await prisma.event.createMany({
-                data:[
-                    ...processedEv
-                ],
-            });
+            if(events?.length){
+                let count = await prisma.event.createMany({
+                    data:[
+                        ...processedEv
+                    ],
+                });
+            }
         }
         return user.id;
     
