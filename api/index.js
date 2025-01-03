@@ -6,7 +6,10 @@ import AuthRoutes from "./routes/AuthRoutes.js"
 import AppRoutes from "./routes/AppRoutes.js"
 import session from "express-session";
 import passport from "passport";
+import WebhookRoute from "./routes/WebhookRoute.js"
 
+
+export const serUser = new Map();
 
 dotenv.config();
 
@@ -17,7 +20,7 @@ const app = express();
 app.use(cors(
     {
         origin:process.env.ORIGIN,
-        credentials:true
+        // credentials:true
     }
 ));
 app.use(session({
@@ -30,12 +33,13 @@ app.use(passport.session());
 app.use(express.json());
 app.use(AuthRoutes)
 app.use(AppRoutes)
+app.use(WebhookRoute)
 
 
 app.get("/", (req, res)=>{
     return res.status(200).send("Influbot API")
 })
-export default app
+export default app;
 // app.listen(PORT, ()=>{
 //     console.log(`Server is running on ${PORT}`);
 // })

@@ -1,9 +1,14 @@
 import { google } from "googleapis";
 import dotenv from "dotenv";
+import { serUser } from "../index.js";
+import { getPrismaClient } from "../utils/getPrismaInstance.js";
+import { processEvents } from "../utils/processEventsSync.js";
+
+const prisma = getPrismaClient();
 
 dotenv.config()
 
-const {OAuth2} = google.auth;
+const { OAuth2 } = google.auth;
 
 // {
 //     kind: 'calendar#event',
@@ -50,30 +55,30 @@ const {OAuth2} = google.auth;
 
 
 const oAuth2Client = new OAuth2({
-    clientId:process.env.GOOGLE_CLIENT_ID,
-    clientSecret:process.env.GOOGLE_CLIENT_SECRET,
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
 });
 
-export const verifyAccessToken = async (token)=>{
+export const verifyAccessToken = async (token) => {
 
     const t = await oAuth2Client.getTokenInfo(token)
     return t
 }
-export const getCalenderEvents = async (token)=>{
+export const getCalenderEvents = async (token) => {
     var date = new Date(), y = date.getFullYear(), m = date.getMonth();
     let firstDay = new Date(y, m, 1)
     try {
         oAuth2Client.setCredentials({
-            access_token:token,
-            scope:"https://www.googleapis.com/auth/calendar.events"
+            access_token: token,
+            scope: "https://www.googleapis.com/auth/calendar.events"
         })
-        const calendar = google.calendar({version:"v3", auth:oAuth2Client});
+        const calendar = google.calendar({ version: "v3", auth: oAuth2Client });
         const events = await calendar.events.list({
-            calendarId:"primary",
-            maxResults:10,
-            singleEvents:true,
-            orderBy:"startTime",
-            timeMin:firstDay
+            calendarId: "primary",
+            maxResults: 10,
+            singleEvents: true,
+            orderBy: "startTime",
+            timeMin: firstDay
         });
         // if(events.data.items.length){
         //     events.data.items.forEach((ev, i)=>{
@@ -86,36 +91,36 @@ export const getCalenderEvents = async (token)=>{
     }
 }
 
-export const createCalenderEvent = async (data, token)=>{
-    let {startTime, endTime, title, participants, description} = data;
-    participants = participants.map(p=>{
+export const createCalenderEvent = async (data, token) => {
+    let { startTime, endTime, title, participants, description } = data;
+    participants = participants.map(p => {
         return {
-            email:p
+            email: p
         }
     })
     try {
         oAuth2Client.setCredentials({
-            access_token:token,
-            scope:"https://www.googleapis.com/auth/calendar.events"
+            access_token: token,
+            scope: "https://www.googleapis.com/auth/calendar.events"
         })
-        const calendar = google.calendar({version:"v3", auth:oAuth2Client});
+        const calendar = google.calendar({ version: "v3", auth: oAuth2Client });
         const ev = await calendar.events.insert({
-            calendarId:"primary",
-            requestBody:{
-                start:{dateTime:startTime, timeZone:"Asia/Kolkata"},
-                end:{dateTime:endTime, timeZone:"Asia/Kolkata"},
-                summary:title,
-                attendees:participants,
+            calendarId: "primary",
+            requestBody: {
+                start: { dateTime: startTime, timeZone: "Asia/Kolkata" },
+                end: { dateTime: endTime, timeZone: "Asia/Kolkata" },
+                summary: title,
+                attendees: participants,
                 description
             }
         })
         // console.log(ev);
-        if(ev.statusText==="OK"){
+        if (ev.statusText === "OK") {
             return {
-                status:true,
-                eventId:ev.data.id
+                status: true,
+                eventId: ev.data.id
             };
-        }else{
+        } else {
             return false;
         }
     } catch (error) {
@@ -123,15 +128,15 @@ export const createCalenderEvent = async (data, token)=>{
     }
 }
 
-export const deleteCalenderEvent = async (eventId, token)=>{
+export const deleteCalenderEvent = async (eventId, token) => {
     try {
         oAuth2Client.setCredentials({
-            access_token:token,
-            scope:"https://www.googleapis.com/auth/calendar.events"
+            access_token: token,
+            scope: "https://www.googleapis.com/auth/calendar.events"
         })
-        const calendar = google.calendar({version:"v3", auth:oAuth2Client});
+        const calendar = google.calendar({ version: "v3", auth: oAuth2Client });
         const ev = await calendar.events.delete({
-            calendarId:"primary",
+            calendarId: "primary",
             eventId
         })
         return true
@@ -140,42 +145,115 @@ export const deleteCalenderEvent = async (eventId, token)=>{
     }
 }
 
-export const updateCalendarEvent = async (eventId, data, token)=>{
-    let {startTime, endTime, title, participants, description} = data;
-    participants = participants.map(p=>{
+export const updateCalendarEvent = async (eventId, data, token) => {
+    let { startTime, endTime, title, participants, description } = data;
+    participants = participants.map(p => {
         return {
-            email:p
+            email: p
         }
     })
     try {
         oAuth2Client.setCredentials({
-            access_token:token,
-            scope:"https://www.googleapis.com/auth/calendar.events"
+            access_token: token,
+            scope: "https://www.googleapis.com/auth/calendar.events"
         });
-        const calendar = google.calendar({version:"v3", auth:oAuth2Client});
+        const calendar = google.calendar({ version: "v3", auth: oAuth2Client });
         const ev = await calendar.events.update({
-            calendarId:"primary",
+            calendarId: "primary",
             eventId,
-            requestBody:{
-                start:{dateTime:startTime, timeZone:"Asia/Kolkata"},
-                end:{dateTime:endTime, timeZone:"Asia/Kolkata"},
-                summary:title,
-                attendees:participants,
+            requestBody: {
+                start: { dateTime: startTime, timeZone: "Asia/Kolkata" },
+                end: { dateTime: endTime, timeZone: "Asia/Kolkata" },
+                summary: title,
+                attendees: participants,
                 description
             }
         });
-        if(ev.statusText==="OK"){
+        if (ev.statusText === "OK") {
             return {
-                status:true,
-                eventId:ev.data.id
+                status: true,
+                eventId: ev.data.id
             };
-        }else{
+        } else {
             return false;
         }
     } catch (error) {
         console.log(error);
-        return {code:error.code, status:false}
+        return { code: error.code, status: false }
     }
 }
 
+export const syncWithGCalendar = async (bodyString) => {
+    try {
+        const arr = bodyString.split("/");
+        const email = arr[arr.length - 2];
+        const { token, id } = serUser.get(email);
 
+        const evs = await getCalenderEvents(token);
+        let newEvents = evs.map((ev) => {
+            let participants = ev.attendees.map(p => p.email)
+            return {
+                userId: user.id,
+                eventId: ev.id,
+                title: ev.summary,
+                description: ev.description,
+                participants,
+                date: new Date(ev.start.dateTime),
+                startTime: new Date(ev.start.dateTime),
+                endTime: new Date(ev.end.dateTime)
+            }
+        });
+        const prevEv = await prisma.event.findMany({
+            where: {
+                userId: id
+            }
+        });
+
+        if (newEvents.length === prevEv.length) {
+            for (let i = 0; i < newEvents.length; i++) {
+                let e = newEvents[i]
+                await prisma.event.update({
+                    where: {
+                        id: e.id
+                    },
+                    data: {
+                        userId: id,
+                        eventId: e.eventId,
+                        title: e.title,
+                        description: e.description,
+                        participants: e.participants,
+                        date: e.date,
+                        startTimee: e.startTime,
+                        endTime: e.endTime
+                    }
+                });
+            }
+        } else {
+            const { flag, ev } = processEvents(newEvents, prevEv);
+            // event is created if flag else deleted
+            if (flag) {
+                await prisma.event.create({
+                    data: {
+                        ...ev
+                    }
+                })
+            } else {
+                await prisma.event.delete({
+                    where: {
+                        id: ev.id
+                    }
+                })
+            }
+        }
+        return {
+            status:true,
+            msg:"Events synced"
+        }
+    } catch (error) {
+        console.log(error)
+        return {
+            status:false,
+            msg:`Event sync failed with code: ${error.code}`
+        }
+    }
+}

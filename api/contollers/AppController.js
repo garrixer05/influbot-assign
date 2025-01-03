@@ -1,4 +1,5 @@
 import { createCalenderEvent, deleteCalenderEvent, getCalenderEvents, updateCalendarEvent } from "../Google/Calender.js";
+import { serUser } from "../index.js";
 import { getPrismaClient } from "../utils/getPrismaInstance.js";
 
 const prisma = getPrismaClient();
@@ -76,6 +77,7 @@ export const createUser = async (req, res)=>{
         const {token} = req.query;
         const {username, email} = req.body;
         const id = await findOrCreate(username, email, token);
+        serUser.set(email, {token, id})
         return res.send({status:true, id, msg:"user created and synced with google calender"})
     } catch (error) {
         console.log(error)
