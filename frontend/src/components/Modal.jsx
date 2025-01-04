@@ -7,6 +7,8 @@ import axios from "axios";
 import { CREATE_EVENT, DELETE_EVENT, UPDATE_EVENT } from "../utils/apiRoutes";
 import { addEvent, deleteEvent, updateEvent } from "../feature/eventSlice";
 import Loader from "./Loader";
+import moment from "moment";
+
 
 const getFDate = (s) => {
     let date = new Date(s);
@@ -28,8 +30,13 @@ const getftime = (s) => {
 }
 const putTime = (s, d) => {
     s += ":00"
-    const t = new Date(d.toDateString() + " " + s).toISOString();
-    return t
+    // const t = new Date(d.toDateString() + " " + s).toISOString();
+    let combinedDate = new Date(d.toDateString() + " " + s);
+    let isoStringInUTC = combinedDate.toISOString();
+    let formattedDate = isoStringInUTC.replace('Z', '-05:30');  // Replace Z with IST offset
+    
+    
+    return new Date(formattedDate).toISOString();
 }
 export const Modal = () => {
     const { currEv } = useSelector(store => store.modal);

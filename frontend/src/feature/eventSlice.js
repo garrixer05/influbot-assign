@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     events:[],
-    isLoading:false
+    isLoading:false,
 }
 
 const eventSlice = createSlice({
@@ -23,9 +23,12 @@ const eventSlice = createSlice({
             let newEv = state.events.filter(ev=>action.payload.id!==ev.id);
             newEv.push(action.payload)
             state.events = newEv;
+        },
+        toggleState: (state)=>{
+            state.events=state.events
         }
     }
 })
 
-export const {setUserEvents, addEvent, updateEvent, deleteEvent}  = eventSlice.actions;
+export const {setUserEvents, addEvent, updateEvent, deleteEvent, toggleState}  = eventSlice.actions;
 export default eventSlice.reducer;

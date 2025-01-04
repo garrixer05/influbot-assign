@@ -6,10 +6,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { showModal, toggleModal } from '../feature/modalSlice';
 import axios from 'axios';
 import { GET_USER } from '../utils/apiRoutes';
-import { setUserEvents } from '../feature/eventSlice';
+import { setUserEvents, toggleState } from '../feature/eventSlice';
 const localizer = momentLocalizer(moment)
 
 export const MyCalendar = () => {
+  const [key,setKey] = useState(0)
   const dispatch = useDispatch()
   const {isVisible} = useSelector((store)=>store.modal);
   const {userId} = useSelector(store=>store.auth);
@@ -35,7 +36,7 @@ export const MyCalendar = () => {
       }
     }
     getUserEv()
-  },[])
+  },[key])
 
   const handleSelectSlot = useCallback(
     ({ start, end }) => {
@@ -62,6 +63,7 @@ export const MyCalendar = () => {
       }
         
       <Calendar
+        key={key}
         events={events.map(ev=>{
           return{
             ...ev,
@@ -78,6 +80,7 @@ export const MyCalendar = () => {
         endAccessor="end"
         style={{ height: 500 }}
       />
+      <button onClick={()=>setKey(key+1)} className={"mt-1 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-2 py-2.5 text-center"}>Refresh</button>
     </div>
   )
 }

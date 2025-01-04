@@ -43,7 +43,9 @@ function App() {
     <div>
       <Toaster/>
       {isAuthenticated ? (
+        <>
         <MyCalendar />
+        </>
       ) : (
         <Login login={login}/>
         // <button onClick={()=>login()}>Login with google</button>
