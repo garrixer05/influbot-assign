@@ -192,11 +192,7 @@ export const syncWithGCalendar = async (bodyString) => {
         const evs = await getCalenderEvents(token);
         console.log(evs)
         let newEvents = evs.map((ev) => {
-            let participants = ev.attendees?.map(p => {
-                return {
-                    email:p.email
-                }
-            })
+            let participants = ev.attendees ? ev.attendees?.map(p => p.email) : []
             return {
                 userId: id,
                 eventId: ev.id,
@@ -219,7 +215,7 @@ export const syncWithGCalendar = async (bodyString) => {
                 let e = newEvents[i]
                 await prisma.event.update({
                     where: {
-                        id: e.id
+                        id: prevEv.id
                     },
                     data: {
                         userId: id,
@@ -239,7 +235,14 @@ export const syncWithGCalendar = async (bodyString) => {
             if (flag) {
                 await prisma.event.create({
                     data: {
-                        ...ev
+                        userId: id,
+                        title: ev.title,
+                        description: ev.description ? ev.description : "",
+                        participants: ev.participants,
+                        date: ev.date,
+                        startTime: ev.startTime,
+                        endTime: ev.endTime,
+                        eventId:ev.eventId
                     }
                 })
             } else {

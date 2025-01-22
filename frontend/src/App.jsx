@@ -11,33 +11,41 @@ import { Login } from './components/Login'
 function App() {
   const { isAuthenticated } = useSelector((store) => store.auth)
   const dispatch = useDispatch();
-  const login = useGoogleLogin({
-    onSuccess: async codeResponse => {
-      dispatch(setToken(codeResponse.access_token));
-
-      try {
-        const {data} = await axios.get(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${codeResponse.access_token}`, {
-          headers :{
-            Authorization: `Bearer ${codeResponse.access_token}`,
-            Accept:'application/json'
-          }
-        });
-        const r = await axios.post(CREATE_USER, {
-          email:data.email,
-          username:data.name,
-        }, {
-          params:{
-            token:codeResponse.access_token
-          }
-        })
-        dispatch(toggleAuth());
-        dispatch(setUserId(r.data.id))
-      } catch (error) {
-        console.log(error);
-        toast.error(`${error.message}`)
-      }
+  const login = async()=>{
+    // window.open(LOGIN_WITH_GOOGLE)
+    try {
+      const {data} = await axios.get(LOGIN_WITH_GOOGLE);
+    } catch (error) {
+      console.log(error)
     }
-  });
+  }
+  // const login = useGoogleLogin({
+  //   onSuccess: async codeResponse => {
+  //     dispatch(setToken(codeResponse.access_token));
+
+  //     try {
+  //       const {data} = await axios.get(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${codeResponse.access_token}`, {
+  //         headers :{
+  //           Authorization: `Bearer ${codeResponse.access_token}`,
+  //           Accept:'application/json'
+  //         }
+  //       });
+  //       const r = await axios.post(CREATE_USER, {
+  //         email:data.email,
+  //         username:data.name,
+  //       }, {
+  //         params:{
+  //           token:codeResponse.access_token
+  //         }
+  //       })
+  //       dispatch(toggleAuth());
+  //       dispatch(setUserId(r.data.id))
+  //     } catch (error) {
+  //       console.log(error);
+  //       toast.error(`${error.message}`)
+  //     }
+  //   }
+  // });
 
   return (
     <div>

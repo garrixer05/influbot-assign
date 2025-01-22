@@ -18,15 +18,15 @@ const app = express();
 
 //middlewares
 app.use(cors(
-    {
-        origin:process.env.ORIGIN,
-        // credentials:true
-    }
+    // {
+    //     origin:process.env.ORIGIN,
+    //     // credentials:true
+    // }
 ));
 app.use(session({
     secret:process.env.EXPRESS_SESSION_SECRET,
     saveUninitialized:true,
-    resave:true
+    resave:false
 }))
 app.use(passport.initialize());
 app.use(passport.session());
